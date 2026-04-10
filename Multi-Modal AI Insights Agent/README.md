@@ -24,3 +24,33 @@ langgraph_agent_stream.py:和上面的文件基本相似。主要改进为流式
 langgraph_agent_local_stream.py:在上面的文件的基础上，增加了本地模型选项，这里我在autodl上租了张5090微调了Qwen2.5-7B-Instruct（待改进，运行发现结果输出很慢）
 
 
+第二版：
+
+废弃langgraph_agent.py，主要代码放在langgraph_agent_stream.py。
+
+并且第二版改进点如下所示：
+
+1 引入“反思与自我纠错”机制 (Self-Reflection & Cyclic Graph) : 加入Critic（审查专家）节点在 Synthesizer 节点后。如果 Critic 发现 Synthesizer 生成的答案质量不高（比如产生幻觉、工具没查出东西），它有权把流程打回给 Router 重新更换关键词搜索。
+核心技术点：将有向无环图（DAG）改为带环图（Cyclic Graph）。
+
+2 加入“长期记忆” (Memory Checkpointer) : 引入 LangGraph 的 MemorySaver,显示对话
+
+3 更新本地数据库里查找逻辑
+
+
+第三版：
+
+1 代码结构调整，模块化方便查看和拓展并且通过Streamlit实现Web UI
+
+├── .env                  # 存放你的 DEEPSEEK_API_KEY 等环境变量
+├── config.py             # 配置文件：专门负责初始化 LLM 模型实例
+├── state.py              # 数据模型：存放 AgentState、CriticOutput 等类
+├── tools.py              # 工具库：存放本地检索、网络检索等 @tool 函数
+├── nodes.py              # 核心节点：存放 router_node、synthesizer_node 等
+├── graph.py              # 图结构：专门负责拼装 StateGraph 和记忆组件
+└── main_cil.py           # 程序入口：负责启动 CLI 终端聊天
+└── main_web.py           # 程序入口：负责启动 Web UI 
+
+2 引入 SqliteSaver替代MemorySaver存储对话记录,实现ChatBot
+
+3 更新各节点里prompt，规范输出
