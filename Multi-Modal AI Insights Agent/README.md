@@ -43,12 +43,19 @@ langgraph_agent_local_stream.py:在上面的文件的基础上，增加了本地
 1 代码结构调整，模块化方便查看和拓展并且通过Streamlit实现Web UI
 
 ├── .env                  # 存放你的 DEEPSEEK_API_KEY 等环境变量
+
 ├── config.py             # 配置文件：专门负责初始化 LLM 模型实例
+
 ├── state.py              # 数据模型：存放 AgentState、CriticOutput 等类
+
 ├── tools.py              # 工具库：存放本地检索、网络检索等 @tool 函数
+
 ├── nodes.py              # 核心节点：存放 router_node、synthesizer_node 等
+
 ├── graph.py              # 图结构：专门负责拼装 StateGraph 和记忆组件
+
 └── main_cil.py           # 程序入口：负责启动 CLI 终端聊天
+
 └── main_web.py           # 程序入口：负责启动 Web UI 
 
 2 引入 SqliteSaver替代MemorySaver存储对话记录,实现ChatBot
